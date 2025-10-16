@@ -257,6 +257,33 @@ updated: string      # YYYY-MM-DD
 - `index.html` - Added clear button and relative wrapper
 - `src/main.js` - Added show/hide logic and clear functionality
 
+### Issue #3: GitHub Actions Build Failure - Missing Lock File
+
+**Problem:** GitHub Actions workflow failing with error:
+```
+Error: Dependencies lock file is not found in /home/runner/work/prompt-sharing/prompt-sharing.
+Supported file patterns: package-lock.json,npm-shrinkwrap.json,yarn.lock
+```
+
+**Root Cause:**
+- The workflow specified `cache: 'npm'` which requires a lock file
+- `package-lock.json` was in `.gitignore` so it wasn't committed
+- `npm ci` requires a lock file to ensure consistent installs
+
+**Solution:**
+1. Generated `package-lock.json` by running `npm install`
+2. Removed `package-lock.json` from `.gitignore`
+3. Lock file now tracked in git for consistent dependency versions
+
+**Files Modified:**
+- `.gitignore` - Removed package-lock.json from ignore list
+- `package-lock.json` - Generated and committed (new file)
+
+**Benefits:**
+- Faster CI builds with npm caching
+- Consistent dependency versions across all environments
+- More reliable builds
+
 ---
 
 ## Example Prompts Included
