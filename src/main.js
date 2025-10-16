@@ -31,7 +31,7 @@ function setupTheme() {
 // Load Prompts
 async function loadPrompts() {
   try {
-    const response = await fetch('/prompts-index.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}prompts-index.json`);
     prompts = await response.json();
 
     // Initialize Fuse.js

@@ -284,6 +284,29 @@ Supported file patterns: package-lock.json,npm-shrinkwrap.json,yarn.lock
 - Consistent dependency versions across all environments
 - More reliable builds
 
+### Issue #4: 404 Error on prompts-index.json in Production
+
+**Problem:** When deployed to GitHub Pages at `https://aaronrl.github.io/prompt-sharing/`, the site was trying to fetch `https://aaronrl.github.io/prompts-index.json` (missing the `/prompt-sharing/` base path), resulting in a 404 error.
+
+**Root Cause:**
+- The fetch request used absolute path `/prompts-index.json`
+- In production, Vite's base path is `/prompt-sharing/`
+- The fetch didn't account for the base path, so it went to root instead
+
+**Solution:**
+- Updated fetch to use `import.meta.env.BASE_URL` which Vite provides
+- Changed: `fetch('/prompts-index.json')`
+- To: `fetch(`${import.meta.env.BASE_URL}prompts-index.json`)`
+- This resolves to `/` in dev and `/prompt-sharing/` in production
+
+**Files Modified:**
+- `src/main.js` - Updated fetch URL to use Vite's BASE_URL
+
+**Benefits:**
+- Works correctly in both development and production
+- Automatically uses correct base path based on environment
+- No manual path configuration needed
+
 ---
 
 ## Example Prompts Included
